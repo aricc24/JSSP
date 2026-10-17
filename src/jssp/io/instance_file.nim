@@ -25,11 +25,21 @@ proc parseInstance*(text: string): Instance =
 
   result.ops = newSeq[Operation](result.numOps)
   for idx in 0 ..< result.numOps: 
-    result.ops[idx] = Operation(
-      machine: parseInt(tokens[4 + 2 * idx]),
-      duration: parseInt(tokens[5 + 2 * idx])
-    )
+    let machine = parseInt(tokens[4 + 2 * idx])
+    let duration = parseInt(tokens[5 + 2 * idx])
 
+    if machine < 0 or machine >= result.numMachines: 
+      raise newException(ValueError, 
+        "Invalid machine index " & $machine & " at operation " & $idx)
+    
+    if duration <= 0:
+      raise newException(ValueError,
+        "Invalid duration " & $duration & " at operation " & $idx)
+  
+    result.ops[idx] = Operation(
+      machine: machine,
+      duration: duration
+    )
 
 proc loadInstance*(path: string): Instance = 
   parseInstance(readFile(path))
