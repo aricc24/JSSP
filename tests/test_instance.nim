@@ -1,7 +1,17 @@
 import std/[unittest, os]
 import jssp/io/instance_file
+import ./fixtures
 
 const dataDir = currentSourcePath().parentDir / ".." / "instances"
+
+suite "instance 3x3":
+  let inst = ft3x3()
+
+  test "jobs[1][2] is machine 1, duration 4":
+    check inst.op(1, 2) == Operation(machine: 1, duration: 4)
+
+  test "parsing the text gives the hand-built instance":
+    check parseInstance(ft3x3Text) == inst
 
 suite "instance 40x40":
   let inst = loadInstance(dataDir / "JSSP_40_40.txt")
