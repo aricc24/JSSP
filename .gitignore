@@ -1,0 +1,25 @@
+# Nim compiled binaries
+src/main
+tests/*
+!tests/*.nim
+tests/*
+!tests/*.nim
+src/nimble.paths
+
+# Nim cache / generated files
+nimcache/
+.nimcache/
+
+# Debug / profiling files
+*.out
+*.log
+
+# Editor files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+nimble.develop
+nimbledeps
+evaluation.txt
