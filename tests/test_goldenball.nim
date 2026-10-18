@@ -1,0 +1,50 @@
+import std/[random, unittest]
+import goldenball/[types, moves, problem, goldenball]
+
+#Indepent test of jssp, just cost how many elements are misplaced
+
+proc misplaced(chain: seq[int]): float =
+  for i, x in chain:
+    if x != i:
+      result += 1.0
+
+proc shuffled(rng: var Rand): seq[int] =
+  result = @[0, 1, 2, 3, 4, 5, 6, 7]
+  rng.shuffle(result)
+
+proc tProblem(): Problem =
+  Problem(cost: misplaced, newChain: shuffled,
+          coaches: @[genericCoach(mkSwap), genericCoach(mkInsert),
+                     genericCoach(mkReverse)])
+
+suite "Initialization":
+  test "teams have the right shape and every cost is computed":
+    var rng = initRand(42)
+    let problem = tProblem()
+    let teams = initTeams(problem, rng, 4, 12)
+    check teams.len == 4
+    for team in teams:
+      check team.players.len == 12
+      check team.coach in 0 ..< problem.coaches.len
+      check team.points == 0
+      for p in team.players:
+        check p.cost == misplaced(p.chain)
+        check p.withoutImprovement == 0
+
+  test "players are sorted, captain first":
+    var rng = initRand(42)
+    let teams = initTeams(tProblem(), rng, 4, 12)
+    for team in teams:
+      for i in 1 ..< team.players.len:
+        check team.players[i - 1].cost <= team.players[i].cost
+
+  test "the same seed builds the same teams":
+    var rng1 = initRand(7)
+    var rng2 = initRand(7)
+    let problem = tProblem()
+    let a = initTeams(problem, rng1, 4, 12)
+    let b = initTeams(problem, rng2, 4, 12)
+    for t in 0 ..< a.len:
+      check a[t].coach == b[t].coach
+      for i in 0 ..< a[t].players.len:
+        check a[t].players[i].chain == b[t].players[i].chain
