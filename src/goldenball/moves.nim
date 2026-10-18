@@ -5,7 +5,7 @@ type
     mkswap
     mkInsert
     mkReverse
-   # mkAdjacentSwap
+    mkAdjacentSwap
   
   Move* = object
     kind*: MoveKind
@@ -36,13 +36,13 @@ func reverseSegment(chain: var seq[int], a: int, b: int) =
 
 func apply*(chain: var seq[int], mv: Move) =
   case mv.kind
-    of mkswap: swap(chain[mv.a], chain[mv.b])
+    of mkswap, mkAdjacentSwap: swap(chain[mv.a], chain[mv.b])
     of mkInsert: chain.insert(mv.a, mv.b)
     of mkReverse: chain.reverseSegment(mv.a, mv.b)
 
 func undo*(chain: var seq[int], mv: Move) =
   case mv.kind
-    of mkswap: swap(chain[mv.a], chain[mv.b])
+    of mkswap, mkAdjacentSwap: swap(chain[mv.a], chain[mv.b])
     of mkInsert: chain.insert(mv.b, mv.a)
     of mkReverse: chain.reverseSegment(mv.a, mv.b)
 
@@ -54,8 +54,13 @@ proc randomPair(rng: var Rand, n: int): (int, int) =
   (a, b)
 
 proc randomMove*(rng: var Rand, kind: MoveKind, n: int): Move = 
-  let (a, b) = rng.randomPair(n)
-  Move(kind: kind, a: a, b: b)
+  case kind
+  of mkAdjacentSwap:
+    let a = rng.rand(n - 2)
+    Move(kind: kind, a: a, b: a + 1)
+  else: 
+    let (a, b) = rng.randomPair(n)
+    Move(kind: kind, a: a, b: b)
 
 
 
