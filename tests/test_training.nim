@@ -39,3 +39,37 @@ suite "Conventional training":
       check p.cost == 0.0
     check team.players[0].withoutImprovement == 1   
     check team.players[1].withoutImprovement == 0   
+
+suite "Custom training":
+  test "goldenHelp reproduces the kown 3x3 example":
+    var buf = initHelpBuffer(10)
+    var chain = @[4, 2, 6, 5, 0, 1, 9, 7, 8, 3]
+    goldenHelp(chain, @[0, 1, 2, 3, 4, 5, 6, 7, 8, 9], buf)
+    check chain == @[0, 1, 2, 3, 4, 6, 5, 9, 7, 8]
+
+  test "the buffer can be reused and the result is always a permutation":
+    var rng = initRand(42)
+    var buf = initHelpBuffer(8)
+
+    for _ in 0 ..< 100:
+      var chain = @[0, 1, 2, 3, 4, 5, 6, 7]
+      var captain = chain
+      rng.shuffle(chain)
+      rng.shuffle(captain)
+      goldenHelp(chain, captain, buf)
+      check chain.sorted == @[0, 1, 2, 3, 4, 5, 6, 7]
+
+  test "only stuck players are replaced and their counter is kept":
+    var buf = initHelpBuffer(4)
+    var team = Team(players: @[playerOf(@[0, 1, 2, 3]),    
+                               playerOf(@[3, 2, 1, 0]),
+                               playerOf(@[1, 0, 3, 2])])
+    team.players[1].withoutImprovement = 5
+    team.players[2].withoutImprovement = 4
+    
+    customTrain(team, tproblem, buf, 5)
+    check team.players[0].chain == @[0, 1, 2, 3]   
+    check team.players[1].chain == @[0, 1, 3, 2]   
+    check team.players[1].cost == 2.0
+    check team.players[1].withoutImprovement == 5
+    check team.players[2].chain == @[1, 0, 3, 2]   
