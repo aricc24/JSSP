@@ -31,7 +31,7 @@ func nodesInCycle*(g: DisjunctiveGraph, ws: var Workspace): int =
         ws.queue[tail] = v 
         inc tail
   
-  n-tail
+  n - tail
 
 func isFeasible*(g: DisjunctiveGraph, ws: var Workspace): bool =
   g.nodesInCycle(ws) == 0
