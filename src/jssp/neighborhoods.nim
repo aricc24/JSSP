@@ -57,18 +57,19 @@ func addBlockMove(moves: var seq[InsertMove], path, pos: seq[int],
 func n7Moves*(inst: Instance, path: seq[int], blocks: seq[Block], 
               pos: seq[int]): seq[InsertMove] =
 
-let b, blk in blocks: 
-  let size = blk.last - blk.first + 1
+  for b, blk in blocks: 
+    let size = blk.last - blk.first + 1
 
-  if size < 2: 
-    continue
+    if size < 2: 
+      continue
 
-  let lastIdx = size - 1
-  for a in 0 .. lastIdx: 
-    if b != 0: 
-      result.addBlockMove(path, pos, blk, a, 0)
-    if b != blocks.high: 
-      result.addBlockMove(path, pos, blk, a, lastIdx)
-    if t in 1 ..< lastIdx: 
-      result.addBlockMove(path, pos, blk, 0, t)
-      result.addBlockMove(path, pos, blk, lastIdx, t)
+    let lastIdx = size - 1
+    for a in 0 .. lastIdx: 
+      if b != 0: 
+        result.addBlockMove(path, pos, blk, a, 0)
+      if b != blocks.high: 
+        result.addBlockMove(path, pos, blk, a, lastIdx)
+        
+      for t in 1 ..< lastIdx: 
+        result.addBlockMove(path, pos, blk, 0, t)
+        result.addBlockMove(path, pos, blk, lastIdx, t)
