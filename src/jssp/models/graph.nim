@@ -8,6 +8,7 @@ type
     numMachines*: int
     machineNext*: seq[int]
     inDegree*: seq[int]
+    lastOnMachine: seq[int]
 
 func numNodes*(g: DisjunctiveGraph): int {.inline.} =
   g.machineNext.len
@@ -48,3 +49,25 @@ func buildGraph*(inst: Instance, mc: MachineChain): DisjunctiveGraph =
         inc result.inDegree[v]
       else: 
         result.machineNext[u] = NoNode
+
+func initGraph*(inst: Instance): DisjunctiveGraph =
+  DisjunctiveGraph(numMachines: inst.numMachines,
+                   machineNext: newSeq[int](inst.numOps),
+                   inDegree: newSeq[int](inst.numOps),
+                   lastOnMachine: newSeq[int](inst.numMachines))
+
+func rebuild*(g: var DisjunctiveGraph, inst: Instance, chain: OperationChain) =
+  for machine in 0 ..< inst.numMachines:
+    g.lastOnMachine[machine] = NoNode
+
+  for u in 0 ..< inst.numOps:
+    g.machineNext[u] = NoNode
+    g.inDegree[u] = if inst.posOf(u) > 0: 1 else: 0
+
+  for u in chain:
+    let machine = inst.ops[u].machine
+    let prev = g.lastOnMachine[machine]
+    if prev != NoNode:
+      g.machineNext[prev] = u
+      inc g.inDegree[u]
+    g.lastOnMachine[machine] = u
