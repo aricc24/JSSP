@@ -36,17 +36,22 @@ suite "Cost 40x40":
 
   test "chain that respects job order is always feasible":
     var chain: OperationChain
+
     for k in 0 ..< inst.numMachines:
       for job in 0 ..< inst.numJobs:
         chain.add inst.opIndex(job, k)
+
     let ev = inst.evaluate(inst.graphOf(chain), ws)
+
     check ev.nodesInCycle == 0
     check ev.makespan >= inst.computeLowerBound
     check ev.makespan <= inst.computeUpperBound
 
   test "both Kahn versions agree on random solutions":
     var rng = initRand(123)
+
     for _ in 1 .. 100:
       let g = inst.graphOf(inst.randomOperationChain(rng))
       let cycles = g.nodesInCycle(ws)
+      
       check inst.evaluate(g, ws).nodesInCycle == cycles

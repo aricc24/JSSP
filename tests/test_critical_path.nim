@@ -8,13 +8,15 @@ suite "Critical path 3x3":
   var ws = initWorkspace(inst.numOps)
   discard inst.evaluate(inst.buildGraph(inst.toMachineChain(ganttChain)), ws)
 
-  test "path O11 -> O21 -> O22 -> O23":
+  test "path O11 - O21 - O22 - O23":
     check ws.criticalPath == @[0, 3, 4, 5]
 
   test "its length is the makespan":
     var total = 0
+
     for u in ws.criticalPath:
       total += inst.ops[u].duration
+
     check total == 12
 
   test "blocks":
