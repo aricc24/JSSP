@@ -4,6 +4,8 @@ type
   MoveKind* = enum 
     mkswap
     mkInsert
+    mkReverse
+   # mkAdjacentSwap
   
   Move* = object
     kind*: MoveKind
@@ -23,15 +25,26 @@ func insert(chain: var seq[int], src: int, dst: int) =
   
   chain[dst] = x
 
+func reverseSegment(chain: var seq[int], a: int, b: int) = 
+  var i = min(a, b)
+  var j = max(a, b)
+
+  while i < j: 
+    swap(chain[i], chain[j])
+    inc i
+    dec j
+
 func apply*(chain: var seq[int], mv: Move) =
   case mv.kind
     of mkswap: swap(chain[mv.a], chain[mv.b])
     of mkInsert: chain.insert(mv.a, mv.b)
+    of mkReverse: chain.reverseSegment(mv.a, mv.b)
 
 func undo*(chain: var seq[int], mv: Move) =
   case mv.kind
     of mkswap: swap(chain[mv.a], chain[mv.b])
     of mkInsert: chain.insert(mv.b, mv.a)
+    of mkReverse: chain.reverseSegment(mv.a, mv.b)
 
 proc randomPair(rng: var Rand, n: int): (int, int) =
   let a = rng.rand(n - 1)
