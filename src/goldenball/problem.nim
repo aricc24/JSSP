@@ -14,3 +14,4 @@ type
 proc genericCoach*(kind: MoveKind): Coach =
   result = proc(chain: seq[int], rng: var Rand, mv: var Move): bool =
     mv = randomMove(rng, kind, chain.len)
+    true
