@@ -5,11 +5,15 @@ type
     inDegree*: seq[int]
     finish*: seq[int]
     queue*: seq[int]
+    critPred*: seq[int]
+    lastNode*: int
 
 func initWorkspace*(numNodes: int): Workspace = 
   Workspace(inDegree: newSeq[int](numNodes),
             finish: newSeq[int](numNodes),
             queue: newSeq[int](numNodes),
+            critPred: newSeq[int](numNodes), 
+            lastNode: NoNode 
   )
 
 func nodesInCycle*(g: DisjunctiveGraph, ws: var Workspace): int =

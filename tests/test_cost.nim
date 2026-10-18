@@ -9,7 +9,7 @@ const dataDir = currentSourcePath().parentDir / ".." / "instances"
 proc graphOf(inst: Instance, chain: OperationChain): DisjunctiveGraph =
   inst.buildGraph(inst.toMachineChain(chain))
 
-suite "cost 3x3":
+suite "Cost 3x3":
   let inst = ft3x3()
   var ws = initWorkspace(inst.numOps)
 
@@ -30,7 +30,7 @@ suite "cost 3x3":
     check ev.nodesInCycle == 9
     check inst.cost(ev) > 1.0   
 
-suite "cost 40x40":
+suite "Cost 40x40":
   let inst = loadInstance(dataDir / "JSSP_40_40.txt")
   var ws = initWorkspace(inst.numOps)
 

@@ -10,10 +10,12 @@ type
 func evaluate*(inst: Instance, g: DisjunctiveGraph, ws: var Workspace): Evaluation =
   let n = g.numNodes
   var head, tail = 0
+  ws.lastNode = NoNode
 
   for u in 0 ..< n:
     ws.inDegree[u] = g.inDegree[u]
     ws.finish[u] = 0
+    ws.critPred[u] = NoNode
 
     if ws.inDegree[u] == 0: 
       ws.finish[u] = inst.ops[u].duration
@@ -23,10 +25,17 @@ func evaluate*(inst: Instance, g: DisjunctiveGraph, ws: var Workspace): Evaluati
   while head < tail: 
     let u = ws.queue[head]
     inc head
-    result.makespan = max(result.makespan, ws.finish[u])
+
+    if ws.finish[u] > result.makespan:
+      result.makespan = max(result.makespan, ws.finish[u])
+      ws.lastNode = u
 
     for v in g.successors(u): 
-      ws.finish[v] = max(ws.finish[v], ws.finish[u] + inst.ops[v].duration)
+      let candidate = ws.finish[u] + inst.ops[v].duration
+
+      if candidate > ws.finish[v]:
+        ws.finish[v] = candidate
+        ws.critPred[v] = u 
       dec ws.inDegree[v]
       
       if ws.inDegree[v] == 0: 
