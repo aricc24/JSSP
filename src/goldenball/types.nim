@@ -16,7 +16,7 @@ func sortPlayers*(team: var Team) =
       swap(team.players[j], team.players[j - 1])
       dec j 
 
-func capitan*(team: Team): lent Player = 
+func captain*(team: Team): lent Player = 
   team.players[0]
 
 func quality*(team: Team): float =
