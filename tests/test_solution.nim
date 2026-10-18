@@ -5,7 +5,7 @@ import ./fixtures
 
 const dataDir = currentSourcePath().parentDir / ".." / "instances"
 
-suite "solution 3x3":
+suite "Solution 3x3":
   let inst = ft3x3()
 
   test "gantt chain is a permutation":
@@ -20,7 +20,7 @@ suite "solution 3x3":
     check not @[0, 1, 2].isPermutation(inst.numOps)
     check not @[0, 0, 1, 2, 3, 4, 5, 6, 7].isPermutation(inst.numOps)
 
-suite "random solutions 40x40":
+suite "Random solutions 40x40":
   let inst = loadInstance(dataDir / "JSSP_40_40.txt")
   var rng = initRand(42)
 

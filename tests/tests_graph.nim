@@ -5,7 +5,7 @@ import ./fixtures
 
 const dataDir = currentSourcePath().parentDir / ".." / "instances"
 
-suite "graph 3x3":
+suite "Graph 3x3":
   let inst = ft3x3()
   let g = inst.buildGraph(inst.toMachineChain(ganttChain))
 
@@ -24,7 +24,7 @@ suite "graph 3x3":
     check toSeq(g.successors(4)) == @[5, 2]  
     check toSeq(g.successors(8)).len == 0    
 
-suite "graph 40x40":
+suite "Graph 40x40":
   let inst = loadInstance(dataDir / "JSSP_40_40.txt")
   var rng = initRand(7)
 
