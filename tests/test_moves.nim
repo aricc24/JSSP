@@ -17,6 +17,16 @@ suite "Apply":
     chain.apply(Move(kind: mkInsert, a: 3, b: 1))
     check chain == @[0, 3, 1, 2, 4]
 
+  test "reverse":
+    var chain = @[0, 1, 2, 3, 4]
+    chain.apply(Move(kind: mkReverse, a: 3, b: 1))
+    check chain == @[0, 3, 2, 1, 4]
+
+  test "adjacent swap":
+    var chain = @[0, 1, 2, 3, 4]
+    chain.apply(Move(kind: mkAdjacentSwap, a: 2, b: 3))
+    check chain == @[0, 1, 3, 2, 4]
+
 suite "Undo":
   test "random moves are undone exactly":
     var rng = initRand(42)
