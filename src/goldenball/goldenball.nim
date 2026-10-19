@@ -22,7 +22,7 @@ type
     playersPerTeam*: int
     maxSeasons*: int
     maxTrainingFailures*: int
-    custumTrainingAfter*: int
+    customTrainingAfter*: int
     specialTransferAfter*: int
   
   RunResult* = object
@@ -56,13 +56,13 @@ proc playSeason(teams: var seq[Team], problem: Problem, params: Params,
     for matches in schedule: 
       for team in teams.mitems: 
         trainTeam(team, problem, rng, params.maxTrainingFailures)
-        custumTrain(team, problem, buf, params.custumTrainingAfter)
+        customTrain(team, problem, buf, params.customTrainingAfter)
       specialTransfers(teams, rng, params.specialTransferAfter)
       playMatchday(teams, matches)
 
-      let order = standings(teams)
-      seasonTransfers(teams, order)
-      dismissCoaches(teams, order, problem.coaches.len, rng)
+    let order = standings(teams)
+    seasonTransfers(teams, order)
+    dismissCoaches(teams, order, problem.coaches.len, rng)
 
 proc solve*(problem: Problem, params: Params, rng: var Rand): RunResult =
   var teams = initTeams(problem, rng, params.numTeams, params.playersPerTeam)

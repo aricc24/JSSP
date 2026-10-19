@@ -61,7 +61,7 @@ func goldenHelp*(chain: var seq[int], captain: seq[int], buf: var HelpBuffer) =
 
   swap(chain, buf.child) 
 
-proc custumTrain*(team: var Team, problem: Problem, buf: var HelpBuffer, 
+proc customTrain*(team: var Team, problem: Problem, buf: var HelpBuffer, 
                   custumAfter: int) =
   for i in 1 ..< team.players.len: 
     if team.players[i].withoutImprovement >= custumAfter: 
