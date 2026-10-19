@@ -46,3 +46,20 @@ func improves(now, before: Snapshot): bool =
     now.sumCaptains < before.sumCaptains or
       now.best < before.best
 
+proc playSeason(teams: var seq[Team]. problem: Problem, params: Params, 
+                schedule: seq[seq[(int, ing)]], buf: var HelpBuffer,
+                rng: var Rand) =
+  for team in teams.mitems: 
+    team.points = 0
+  
+  for half in 0 ..< 2: 
+    for matches in schedule: 
+      for team in teams.mitems: 
+        trainTeam(team, problem, rng, params.maxTrainingFailures)
+        custumTrain(team, problem, buf, params.custumTrainingAfter)
+      specialTransfers(teams, rng, params.specialTransferAfter)
+      playMatchday(teams, matches)
+
+      let order = standings(teams)
+      seasonTransfers(teams, order)
+      dismissCoaches(teams, order, problem.coaches.len, rng)
