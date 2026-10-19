@@ -18,4 +18,6 @@ func seasonTransfers*(teams: var seq[Team], order: seq[int]) =
   for k in 0 ..< teams.len div 2: 
     let top = order[k]
     let bottom = order[teams.len - 1 - k]
-    swap(teams[top].players[last - k], )
+    swap(teams[top].players[last - k], teams[bottom].players[k])
+    teams[top].sortPlayers()
+    teams[bottom].sortPlayers()
