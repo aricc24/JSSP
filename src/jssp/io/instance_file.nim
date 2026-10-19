@@ -21,7 +21,7 @@ proc parseInstance*(text: string): Instance =
   let expected = 4 + 2 * result.numOps
   if tokens.len != expected: 
     raise newException(ValueError, 
-      "expected" & $expected & "values, found" & $tokens.len)
+      "expected " & $expected & " values, found " & $tokens.len)
 
   result.ops = newSeq[Operation](result.numOps)
   for idx in 0 ..< result.numOps: 
