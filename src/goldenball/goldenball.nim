@@ -1,5 +1,5 @@
 import std/random
-import ./[types, problem]
+import ./[types, problem, training, league, transfers]
 
 proc newPlayer(problem: Problem, rng: var Rand): Player = 
   result.chain = problem.newChain(rng)
