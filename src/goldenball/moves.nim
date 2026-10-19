@@ -2,7 +2,7 @@ import std/random
 
 type
   MoveKind* = enum 
-    mkswap
+    mkSwap
     mkInsert
     mkReverse
     mkAdjacentSwap

@@ -62,9 +62,9 @@ func goldenHelp*(chain: var seq[int], captain: seq[int], buf: var HelpBuffer) =
   swap(chain, buf.child) 
 
 proc customTrain*(team: var Team, problem: Problem, buf: var HelpBuffer, 
-                  custumAfter: int) =
+                  customAfter: int) =
   for i in 1 ..< team.players.len: 
-    if team.players[i].withoutImprovement >= custumAfter: 
+    if team.players[i].withoutImprovement >= customAfter: 
       goldenHelp(team.players[i].chain, team.players[0].chain, buf)
       team.players[i].cost = problem.cost(team.players[i].chain)
   
