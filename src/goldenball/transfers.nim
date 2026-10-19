@@ -21,3 +21,16 @@ func seasonTransfers*(teams: var seq[Team], order: seq[int]) =
     swap(teams[top].players[last - k], teams[bottom].players[k])
     teams[top].sortPlayers()
     teams[bottom].sortPlayers()
+
+proc dismissCoaches*(teams: var seq[Team], order: seq[int], 
+                      numCoaches: int, rng: var Rand) = 
+  if numCoaches < 2: 
+    return
+
+  for k in (teams.len + 1) div 2 ..< teams.len: 
+    let t = order[k]
+    var c = rng.rand(numCoaches)
+    if c >= teams[t].coach: 
+      inc c
+    teams[t].coach = c
+
