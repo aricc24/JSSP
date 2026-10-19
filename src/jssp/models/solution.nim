@@ -40,3 +40,16 @@ func toMachineChain*(inst: Instance, chain: OperationChain): MachineChain =
     let machine = inst.ops[opIdx].machine
     result.order[machine * inst.numJobs + filled[machine]] = opIdx
     inc filled[machine]
+
+proc randomFeasibleChain*(inst: Instance, rng: var Rand): OperationChain = 
+  var jobs = newSeq[int](inst.numOps)
+  for i in 0 ..< inst.numOps: 
+    jobs[i] = inst.jobOf(i)
+  rng.shuffle(jobs)
+
+  var next = newSeq[int](inst.numJobs)
+  result = newSeq[int](inst.numOps)
+
+  for i, j in jobs: 
+    result[i] = inst.opIndex(j, next[j])
+    inc next[j]
