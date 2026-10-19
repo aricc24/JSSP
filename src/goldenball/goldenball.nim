@@ -63,3 +63,23 @@ proc playSeason(teams: var seq[Team], problem: Problem, params: Params,
       let order = standings(teams)
       seasonTransfers(teams, order)
       dismissCoaches(teams, order, problem.coaches.len, rng)
+
+proc solve*(problem: Problem, params: Params, rng: var Rand): RunResult =
+  var teams = initTeams(problem, rng, params.numTeams, params.playersPerTeam)
+  let schedule = roundRobin(params.numTeams)
+  var buf = initHelpBuffer(teams[0].players[0].chain.len)
+  var before = snapshot(teams)
+
+  while result.seasons < params.maxSeasons: 
+    playSeason(teams, problem, params, schedule, buf, rng)
+    inc result.seasons
+    let now = snapshot(teams)
+    if not now.improves(before): 
+      break 
+    before = now
+  
+  var b = 0
+  for t in 1 ..< teams.len: 
+    if teams[t].captain.cost < teams[b].captain.cost: 
+      b = t
+  result.best = teams[b].captain
