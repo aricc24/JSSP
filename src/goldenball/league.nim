@@ -20,11 +20,11 @@ func roundRobin*(numTeams: int): seq[seq[(int, int)]] =
         matches.add((rm, brc))
     result.add matches
   
-  let last = ring[n - 1]
+    let last = ring[n - 1]
 
-  for i in countdown(n - 1, 2): 
-    ring[i] = ring[i - 1]
-  ring[1] = last
+    for i in countdown(n - 1, 2): 
+      ring[i] = ring[i - 1]
+    ring[1] = last
 
 func playMatch*(teams: var seq[Team], p1: int, p2: int) = 
   var goalsP1 = 0
