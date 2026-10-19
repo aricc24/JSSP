@@ -31,7 +31,18 @@ type
 
   Snapshot = object
     sumQuality: float
-    sumCaptain: float
+    sumCaptains: float
     best: float
 
+func snapshot(teams: seq[Team]): Snapshot = 
+  result.best = Inf 
+  for team in teams: 
+    result.sumQuality += team.quality
+    result.sumCaptains += team.captain.cost
+    result.best = min(result.best, team.captain.cost)
+
+func improves(now, before: Snapshot): bool =
+  now.sumQuality < before.sumQuality or
+    now.sumCaptains < before.sumCaptains or
+      now.best < before.best
 
