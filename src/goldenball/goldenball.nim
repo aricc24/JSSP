@@ -30,8 +30,8 @@ type
     seasons*: int
 
   Snapshot = object
-    sumQuality = float
-    sumCaptain = float
+    sumQuality: float
+    sumCaptain: float
     best: float
 
 
