@@ -11,6 +11,7 @@ func standings*(teams: seq[Team]): seq[int] =
     var j = i
     while j > 0 and teams[result[j]].points > teams[result[j - 1]].points: 
       swap(result[j], result[j - 1])
+      dec j
 
 func seasonTransfers*(teams: var seq[Team], order: seq[int]) =
   let last = teams[0].players.high
@@ -29,7 +30,7 @@ proc dismissCoaches*(teams: var seq[Team], order: seq[int],
 
   for k in (teams.len + 1) div 2 ..< teams.len: 
     let t = order[k]
-    var c = rng.rand(numCoaches)
+    var c = rng.rand(numCoaches - 2)
     if c >= teams[t].coach: 
       inc c
     teams[t].coach = c
@@ -48,5 +49,5 @@ proc specialTransfers*(teams: var seq[Team], rng: var Rand, specialAfter: int) =
         teams[t].players[i].withoutImprovement = 0
         swap(teams[t].players[i], teams[other].players[j])
     
-    for team in teams.mitems: 
-      team.sortPlayers
+  for team in teams.mitems: 
+    team.sortPlayers
