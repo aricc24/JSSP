@@ -15,3 +15,23 @@ proc initTeams*(problem: Problem, rng: var Rand, numTeams: int,
     for player in team.players.mitems: 
       player = newPlayer(problem, rng)
     team.sortPlayers()
+
+type
+  Params* = object
+    numTeams*: int
+    playersPerTeam*: int
+    maxSeasons*: int
+    maxTrainingFailures*: int
+    custumTrainingAfter*: int
+    specialTransferAfter*: int
+  
+  RunResult* = object
+    best*: Player
+    seasons*: int
+
+  Snapshot = object
+    sumQuality = float
+    sumCaptain = float
+    best: float
+
+
