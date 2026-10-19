@@ -69,7 +69,7 @@ func n7Moves*(inst: Instance, path: seq[int], blocks: seq[Block],
         result.addBlockMove(path, pos, blk, a, 0)
       if b != blocks.high: 
         result.addBlockMove(path, pos, blk, a, lastIdx)
-        
-      for t in 1 ..< lastIdx: 
-        result.addBlockMove(path, pos, blk, 0, t)
-        result.addBlockMove(path, pos, blk, lastIdx, t)
+      
+    for t in 1 ..< lastIdx: 
+      result.addBlockMove(path, pos, blk, 0, t)
+      result.addBlockMove(path, pos, blk, lastIdx, t)
