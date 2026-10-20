@@ -18,7 +18,27 @@ proc jsspCost(chain: seq[int]): float =
 proc feasibleChain(rng: var Rand): seq[int] =
   randomFeasibleChain(inst, rng)
 
-##pros n5 y n7
+proc n5Coach(chain: seq[int], rng: var Rand, mv: var Move): bool =
+  if evaluateChain(chain).nodesInCycle > 0:
+    return false
+  let path = criticalPath(ws)
+  let moves = n5Moves(inst, path, criticalBlocks(inst, path), positionsOf(chain))
+  if moves.len == 0:
+    return false
+  let s = moves[rng.rand(moves.high)]
+  mv = Move(kind: mkSwap, a: s.i, b: s.j)
+  true
+
+proc n7Coach(chain: seq[int], rng: var Rand, mv: var Move): bool =
+  if evaluateChain(chain).nodesInCycle > 0:
+    return false
+  let path = criticalPath(ws)
+  let moves = n7Moves(inst, path, criticalBlocks(inst, path), positionsOf(chain))
+  if moves.len == 0:
+    return false
+  let s = moves[rng.rand(moves.high)]
+  mv = Move(kind: mkInsert, a: s.src, b: s.dst)
+  true
 
 proc main() = 
   inst = loadInstance("instances/JSSP_40_40.txt")
@@ -29,17 +49,18 @@ proc main() =
           Problem(cost: jsspCost, 
                   newChain: feasibleChain,  
                   coaches: @[genericCoach(mkSwap), genericCoach(mkInsert), 
-                              genericCoach(mkReverse), genericCoach(mkAdjacentSwap)]
+                              genericCoach(mkReverse), genericCoach(mkAdjacentSwap), 
+                              n5Coach, n7Coach]
                   )
   
-  let params = Params(numTeams: 4,
+  let params = Params(numTeams: 6,
                      playersPerTeam: 12,
-                      maxSeasons: 5,   
+                      maxSeasons: 20,   
                       maxTrainingFailures: 500, 
                       customTrainingAfter: 5,
                       specialTransferAfter: 10)
 
-  var rng = initRand(9433578794396893)
+  var rng = initRand(67676676767)
   let start = getMonoTime()
   let res = solve(problem, params, rng)
   let elapsed = (getMonoTime() - start).inMilliseconds
