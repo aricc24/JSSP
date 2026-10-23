@@ -53,14 +53,14 @@ proc main() =
                               n5Coach, n7Coach]
                   )
   
-  let params = Params(numTeams: 6,
+  let params = Params(numTeams: 5,
                      playersPerTeam: 12,
-                      maxSeasons: 20,   
-                      maxTrainingFailures: 500, 
-                      customTrainingAfter: 5,
-                      specialTransferAfter: 10)
+                      maxSeasons: 25,   
+                      maxTrainingFailures: 700, 
+                      customTrainingAfter: 10,
+                      specialTransferAfter: 20)
 
-  var rng = initRand(67676676767)
+  var rng = initRand(2411303423523123)
   let start = getMonoTime()
   let res = solve(problem, params, rng)
   let elapsed = (getMonoTime() - start).inMilliseconds

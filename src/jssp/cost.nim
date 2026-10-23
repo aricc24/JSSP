@@ -46,8 +46,15 @@ func evaluate*(inst: Instance, g: DisjunctiveGraph, ws: var Workspace): Evaluati
 
 
 func computeUpperBound*(inst: Instance): int =
-  for o in inst.ops: 
-    result += o.duration
+  var jobEnd = newSeq[int](inst.numJobs)
+  var machineEnd = newSeq[int](inst.numMachines)
+  for k in 0 ..< inst.numMachines:        
+    for j in 0 ..< inst.numJobs:
+      let o = inst.op(j, k)
+      let finish = max(jobEnd[j], machineEnd[o.machine]) + o.duration
+      jobEnd[j] = finish
+      machineEnd[o.machine] = finish
+  max(jobEnd)
 
 func computeLowerBound*(inst: Instance): int = 
   var machineLoad = newSeq[int](inst.numMachines)
