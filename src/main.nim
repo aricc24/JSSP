@@ -41,7 +41,9 @@ proc n7Coach(chain: seq[int], rng: var Rand, mv: var Move): bool =
   true
 
 proc main() = 
-  inst = loadInstance("instances/JSSP_40_40.txt")
+  inst = loadInstance("instances/JSSP_100_100.txt")
+  inst.upperBound = inst.computeUpperBound   
+  inst.lowerBound = inst.computeLowerBound 
   g = initGraph(inst)
   ws = initWorkspace(inst.numOps)
 
@@ -54,11 +56,11 @@ proc main() =
                   )
   
   let params = Params(numTeams: 5,
-                     playersPerTeam: 12,
-                      maxSeasons: 25,   
-                      maxTrainingFailures: 700, 
-                      customTrainingAfter: 10,
-                      specialTransferAfter: 20)
+                     playersPerTeam: 24,
+                      maxSeasons: 30,   
+                      maxTrainingFailures: 750, 
+                      customTrainingAfter: 15,
+                      specialTransferAfter: 25)
 
   var rng = initRand(2411303423523123)
   let start = getMonoTime()
