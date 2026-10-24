@@ -162,15 +162,22 @@ proc main() =
                         evalChain = evaluateChain)
   let elapsed = (getMonoTime() - start).inMilliseconds
 
-  echo "best cost:   ", res.bestCost
-  echo "best makespan: ", res.bestMakespan, " (nodes in cycle: ", res.bestNodesInCycle, ")"
-  echo "best seed:   ", res.bestSeed
-  echo "best seasons:", res.bestSeasons
-  echo "time:        ", elapsed.float / 1000.0, " s"
+  echo ""
+  echo "========================================"
+  echo " Process ", options.processId, " finished"
+  echo "========================================"
+  echo "Instance:         ", options.instancePath
+  echo "Base seed:        ", options.seed
+  echo "Runs:             ", options.runs
+  echo "Best cost:        ", res.bestCost
+  echo "Best makespan:    ", res.bestMakespan, " (nodes in cycle: ", res.bestNodesInCycle, ")"
+  echo "Best seed:        ", res.bestSeed
+  echo "Best seasons:     ", res.bestSeasons
+  echo "Time:             ", elapsed.float / 1000.0, " s"
+  echo "========================================"
 
-
-
-main()
+when isMainModule:
+  main()
 
 
 
