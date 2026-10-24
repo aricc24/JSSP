@@ -1,4 +1,4 @@
-import std/[random, times, monotimes]
+import std/[random, times, monotimes, parseopt, strutils, os]
 import jssp/io/instance_file
 import jssp/models/[solution, graph]
 import jssp/[cost, critical_path, neighborhoods]
@@ -55,6 +55,38 @@ proc parseArguments(): CliOptions =
     of cmdArgument: discard
     of cmdEnd: discard
 
+proc validateArguments(options: CliOptions) =
+  if options.instancePath.len == 0:
+    raise 
+      newException(ValueError, "Missing required option: --instance")
+  if not fileExists(options.instancePath):
+    raise 
+      newException(ValueError, "Instance file not found: " & options.instancePath)
+  if options.runs <= 0:
+    raise 
+      newException(ValueError, "Runs must be greater than zero")
+  if options.processId < 0:
+    raise 
+      newException(ValueError, "Process ID cannot be negative")
+  if options.numTeams <= 0:
+    raise 
+      newException(ValueError, "Num teams must be greater than zero")
+  if options.playersPerTeam <= 0:
+    raise 
+      newException(ValueError, "Players per team must be greater than zero")
+  if options.maxSeasons <= 0:
+    raise 
+      newException(ValueError, "Max seasons must be greater than zero")
+  if options.maxTrainingFailures <= 0:
+    raise 
+      newException(ValueError, "Max training failures must be greater than zero")
+  if options.customTrainingAfter <= 0:
+    raise 
+      newException(ValueError, "Custom training after must be greater than zero")
+  if options.specialTransferAfter <= 0:
+    raise 
+      newException(ValueError, "Special transfer after must be greater than zero")
+
 proc evaluateChain(chain: seq[int]): Evaluation = 
   g.rebuild(inst, chain)
   evaluate(inst, g, ws)
@@ -97,6 +129,9 @@ proc printMachines(inst: Instance, chain: seq[int]) =
     stdout.write "\n"
 
 proc main() = 
+  let options = parseArguments()
+  validateArguments(options)
+
   inst = loadInstance("instances/JSSP_40_40.txt")
   inst.upperBound = inst.computeUpperBound   
   inst.lowerBound = inst.computeLowerBound 
@@ -111,17 +146,20 @@ proc main() =
                               n5Coach, n7Coach]
                   )
   
-  let params = Params(numTeams: 5,
-                      playersPerTeam: 12,
-                      maxSeasons: 20,   
-                      maxTrainingFailures: 550, 
-                      customTrainingAfter: 10,
-                      specialTransferAfter: 20)
+  let params = Params(numTeams: options.numTeams,
+                      playersPerTeam: options.playersPerTeam,
+                      maxSeasons: options.maxSeasons,   
+                      maxTrainingFailures: options.maxTrainingFailures, 
+                      customTrainingAfter: options.customTrainingAfter,
+                      specialTransferAfter: options.specialTransferAfter)
 
 
   let start = getMonoTime()
-  let res = runMultiple(problem, params, runs = 3, baseSeed = 28371239,
-                      processId = 0, evalChain = evaluateChain)
+  let res = runMultiple(problem, params,  
+                        runs = options.runs, 
+                        baseSeed = options.seed, 
+                        processId = options.processId, 
+                        evalChain = evaluateChain)
   let elapsed = (getMonoTime() - start).inMilliseconds
 
   echo "best cost:   ", res.bestCost
