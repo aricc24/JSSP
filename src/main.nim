@@ -9,6 +9,52 @@ var inst: Instance
 var g: DisjunctiveGraph
 var ws: Workspace
 
+type
+  CliOptions = object
+    instancePath: string
+    runs: int
+    seed: int
+    processId: int
+
+    numTeams: int
+    playersPerTeam: int
+    maxSeasons: int
+    maxTrainingFailures: int
+    customTrainingAfter: int
+    specialTransferAfter: int
+
+proc parseArguments(): CliOptions =
+  result.runs = 1
+  result.seed = 1
+  result.processId = 0
+
+  result.numTeams = 5
+  result.playersPerTeam = 24
+  result.maxSeasons = 30
+  result.maxTrainingFailures = 750
+  result.customTrainingAfter = 15
+  result.specialTransferAfter = 25
+
+  var parser = initOptParser()
+  for kind, key, value in parser.getopt():
+    case kind
+    of cmdLongOption, cmdShortOption:
+      case key
+      of "instance", "i":           result.instancePath = value
+      of "runs", "r":               result.runs = parseInt(value)
+      of "seed", "s":               result.seed = parseInt(value)
+      of "process", "p":            result.processId = parseInt(value)
+      of "num-teams":               result.numTeams = parseInt(value)
+      of "players-per-team":        result.playersPerTeam = parseInt(value)
+      of "max-seasons":             result.maxSeasons = parseInt(value)
+      of "max-training-failures":   result.maxTrainingFailures = parseInt(value)
+      of "custom-training-after":   result.customTrainingAfter = parseInt(value)
+      of "special-transfer-after":  result.specialTransferAfter = parseInt(value)
+      else:
+        raise newException(ValueError, "Unknown flag: " & key)
+    of cmdArgument: discard
+    of cmdEnd: discard
+
 proc evaluateChain(chain: seq[int]): Evaluation = 
   g.rebuild(inst, chain)
   evaluate(inst, g, ws)
