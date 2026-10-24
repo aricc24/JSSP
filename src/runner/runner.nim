@@ -1,16 +1,18 @@
 import std/random
+import ../jssp/cost
 import ../goldenball/[problem, goldenball]
 
 type
   MultiRunResult* = object
     bestChain*: seq[int]
     bestCost*: float
+    bestMakespan*: int
+    bestNodesInCycle*: int
     bestSeed*: int
     bestSeasons*: int
-    feasibleRuns*: int
 
 proc runMultiple*(problem: Problem, params: Params, runs: int, baseSeed: int, processId: int,
-                  isFeasible: proc(chain: seq[int]): bool): MultiRunResult =
+                  evalChain: proc(chain: seq[int]): Evaluation): MultiRunResult =
   result.bestCost = Inf
   result.bestSeed = baseSeed
 
@@ -18,21 +20,20 @@ proc runMultiple*(problem: Problem, params: Params, runs: int, baseSeed: int, pr
     let seed = baseSeed + runIndex
     var rng = initRand(seed)
     let res = solve(problem, params, rng)
-    let feasible = isFeasible(res.best.chain)
-
-    if feasible:
-      inc result.feasibleRuns
+    let ev = evalChain(res.best.chain)
 
     if res.best.cost < result.bestCost:
       result.bestChain = res.best.chain
       result.bestCost = res.best.cost
+      result.bestMakespan = ev.makespan
+      result.bestNodesInCycle = ev.nodesInCycle
       result.bestSeed = seed
       result.bestSeasons = res.seasons
 
       echo "[Process ", processId, "] ",
            "New best: ", result.bestCost,
+           " | Makespan: ", ev.makespan,
+           " | Nodes in cycle: ", ev.nodesInCycle,
            " | Seed: ", seed,
            " | Seasons: ", res.seasons,
-           " | Feasible runs: ", result.feasibleRuns, "/", runIndex + 1,
-           " | Run: ", runIndex + 1, "/", runs,
-           " | Is feasible: ", (if feasible: "YES" else: "NO")
+           " | Run: ", runIndex + 1, "/", runs

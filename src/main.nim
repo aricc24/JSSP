@@ -3,6 +3,7 @@ import jssp/io/instance_file
 import jssp/models/[solution, graph]
 import jssp/[cost, critical_path, neighborhoods]
 import goldenball/[moves, problem, goldenball]
+import runner/runner
 
 var inst: Instance
 var g: DisjunctiveGraph
@@ -50,7 +51,7 @@ proc printMachines(inst: Instance, chain: seq[int]) =
     stdout.write "\n"
 
 proc main() = 
-  inst = loadInstance("instances/JSSP_100_100.txt")
+  inst = loadInstance("instances/JSSP_40_40.txt")
   inst.upperBound = inst.computeUpperBound   
   inst.lowerBound = inst.computeLowerBound 
   g = initGraph(inst)
@@ -65,22 +66,25 @@ proc main() =
                   )
   
   let params = Params(numTeams: 5,
-                     playersPerTeam: 12,
+                      playersPerTeam: 12,
                       maxSeasons: 20,   
                       maxTrainingFailures: 550, 
                       customTrainingAfter: 10,
                       specialTransferAfter: 20)
 
-  var rng = initRand(2411303423523123)
+
   let start = getMonoTime()
-  let res = solve(problem, params, rng)
+  let res = runMultiple(problem, params, runs = 3, baseSeed = 28371239,
+                      processId = 0, evalChain = evaluateChain)
   let elapsed = (getMonoTime() - start).inMilliseconds
 
-  let ev = evaluateChain(res.best.chain)
-  echo "seasons:  ", res.seasons
-  echo "cost:     ", res.best.cost
-  echo "makespan: ", ev.makespan, " (nodes in cycle: ", ev.nodesInCycle, ")"
-  echo "time:     ", elapsed.float / 1000.0, " s"
+  echo "best cost:   ", res.bestCost
+  echo "best makespan: ", res.bestMakespan, " (nodes in cycle: ", res.bestNodesInCycle, ")"
+  echo "best seed:   ", res.bestSeed
+  echo "best seasons:", res.bestSeasons
+  echo "time:        ", elapsed.float / 1000.0, " s"
+
+
 
 main()
 
