@@ -40,18 +40,7 @@ proc n7Coach(chain: seq[int], rng: var Rand, mv: var Move): bool =
   mv = Move(kind: mkInsert, a: s.src, b: s.dst)
   true
 
-proc printSchedule(inst: Instance, chain: seq[int]) =
-  let mc = toMachineChain(inst, chain)
-  for machine in 0 ..< inst.numMachines:
-    stdout.write "M", machine, ":"
-    for pos in 0 ..< inst.numJobs:
-      let opIdx = mc[machine, pos]
-      let j = inst.jobOf(opIdx)
-      let k = inst.posOf(opIdx)
-      let d = inst.ops[opIdx].duration
-      stdout.write " J", j, "(op", k, ",d=", d, ")"
-    stdout.write "\n"
-
+  
 proc printMachines(inst: Instance, chain: seq[int]) =
   let mc = toMachineChain(inst, chain)
   for machine in 0 ..< inst.numMachines:
@@ -61,7 +50,7 @@ proc printMachines(inst: Instance, chain: seq[int]) =
     stdout.write "\n"
 
 proc main() = 
-  inst = loadInstance("instances/JSSP_40_40.txt")
+  inst = loadInstance("instances/JSSP_100_100.txt")
   inst.upperBound = inst.computeUpperBound   
   inst.lowerBound = inst.computeLowerBound 
   g = initGraph(inst)
@@ -77,10 +66,10 @@ proc main() =
   
   let params = Params(numTeams: 5,
                      playersPerTeam: 12,
-                      maxSeasons: 10,   
-                      maxTrainingFailures: 200, 
-                      customTrainingAfter: 5,
-                      specialTransferAfter: 15)
+                      maxSeasons: 20,   
+                      maxTrainingFailures: 550, 
+                      customTrainingAfter: 10,
+                      specialTransferAfter: 20)
 
   var rng = initRand(2411303423523123)
   let start = getMonoTime()
@@ -92,7 +81,6 @@ proc main() =
   echo "cost:     ", res.best.cost
   echo "makespan: ", ev.makespan, " (nodes in cycle: ", ev.nodesInCycle, ")"
   echo "time:     ", elapsed.float / 1000.0, " s"
-  printMachines(inst, res.best.chain)
 
 main()
 
