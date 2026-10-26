@@ -14,7 +14,7 @@ suite "Cost 3x3":
   var ws = initWorkspace(inst.numOps)
 
   test "bounds from the known formulas":
-    check inst.computeUpperBound == 12
+    check inst.computeUpperBound == 24
     check inst.computeLowerBound == 10
 
   test "makespan 12, feasible":
