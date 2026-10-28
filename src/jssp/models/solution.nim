@@ -1,5 +1,6 @@
 import std/random
 import ./instance
+import std/strutils
 
 type 
   OperationChain* = seq[int]
@@ -53,3 +54,17 @@ proc randomFeasibleChain*(inst: Instance, rng: var Rand): OperationChain =
   for i, j in jobs: 
     result[i] = inst.opIndex(j, next[j])
     inc next[j]
+
+func formatSolution*(inst: Instance, chain: OperationChain): string =
+  let mc = toMachineChain(inst, chain)
+  var rows = newSeq[string](inst.numMachines)
+
+  for machine in 0 ..< inst.numMachines:
+    var triplets = newSeq[string](inst.numJobs)
+    for pos in 0 ..< inst.numJobs:
+      let opIdx = mc[machine, pos]
+      triplets[pos] = "[" & $inst.jobOf(opIdx) & ", " & $inst.posOf(opIdx) &
+                      ", " & $inst.ops[opIdx].duration & "]"
+    rows[machine] = "[" & triplets.join(", ") & "]"
+
+  rows.join("\n")

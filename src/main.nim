@@ -119,20 +119,11 @@ proc n7Coach(chain: seq[int], rng: var Rand, mv: var Move): bool =
   mv = Move(kind: mkInsert, a: s.src, b: s.dst)
   true
 
-  
-proc printMachines(inst: Instance, chain: seq[int]) =
-  let mc = toMachineChain(inst, chain)
-  for machine in 0 ..< inst.numMachines:
-    stdout.write "M", machine, ":"
-    for pos in 0 ..< inst.numJobs:
-      stdout.write " ", mc[machine, pos]
-    stdout.write "\n"
-
 proc main() = 
   let options = parseArguments()
   validateArguments(options)
 
-  inst = loadInstance("instances/JSSP_40_40.txt")
+  inst = loadInstance(options.instancePath)
   inst.upperBound = inst.computeUpperBound   
   inst.lowerBound = inst.computeLowerBound 
   g = initGraph(inst)
@@ -175,6 +166,8 @@ proc main() =
   echo "Best seasons:     ", res.bestSeasons
   echo "Time:             ", elapsed.float / 1000.0, " s"
   echo "========================================"
+  echo "Solution:"
+  echo formatSolution(inst, res.bestChain)
 
 when isMainModule:
   main()
