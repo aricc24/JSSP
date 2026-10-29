@@ -24,6 +24,7 @@ type
     maxTrainingFailures*: int
     customTrainingAfter*: int
     specialTransferAfter*: int
+    stallSeasons*: int
   
   RunResult* = object
     best*: Player
@@ -69,14 +70,19 @@ proc solve*(problem: Problem, params: Params, rng: var Rand): RunResult =
   let schedule = roundRobin(params.numTeams)
   var buf = initHelpBuffer(teams[0].players[0].chain.len)
   var before = snapshot(teams)
+  var stall = 0
 
   while result.seasons < params.maxSeasons: 
     playSeason(teams, problem, params, schedule, buf, rng)
     inc result.seasons
     let now = snapshot(teams)
-    if not now.improves(before): 
-      break 
-    before = now
+    if now.improves(before):
+      stall = 0 
+      before = now
+    else: 
+      inc stall
+      if stall >= params.stallSeasons:
+        break
   
   var b = 0
   for t in 1 ..< teams.len: 

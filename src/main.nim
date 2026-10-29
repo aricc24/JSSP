@@ -22,6 +22,7 @@ type
     maxTrainingFailures: int
     customTrainingAfter: int
     specialTransferAfter: int
+    stallSeasons: int
 
 proc parseArguments(): CliOptions =
   result.runs = 1
@@ -34,6 +35,7 @@ proc parseArguments(): CliOptions =
   result.maxTrainingFailures = 750
   result.customTrainingAfter = 15
   result.specialTransferAfter = 25
+  result.stallSeasons = 3
 
   var parser = initOptParser()
   for kind, key, value in parser.getopt():
@@ -50,6 +52,7 @@ proc parseArguments(): CliOptions =
       of "max-training-failures":   result.maxTrainingFailures = parseInt(value)
       of "custom-training-after":   result.customTrainingAfter = parseInt(value)
       of "special-transfer-after":  result.specialTransferAfter = parseInt(value)
+      of "stall-seasons":           result.stallSeasons = parseInt(value)
       else:
         raise newException(ValueError, "Unknown flag: " & key)
     of cmdArgument: discard
@@ -86,6 +89,9 @@ proc validateArguments(options: CliOptions) =
   if options.specialTransferAfter <= 0:
     raise 
       newException(ValueError, "Special transfer after must be greater than zero")
+  if options.stallSeasons <= 0:
+    raise 
+      newException(ValueError, "Stall seasons must be greater than zero")
 
 proc evaluateChain(chain: seq[int]): Evaluation = 
   g.rebuild(inst, chain)
@@ -142,7 +148,8 @@ proc main() =
                       maxSeasons: options.maxSeasons,   
                       maxTrainingFailures: options.maxTrainingFailures, 
                       customTrainingAfter: options.customTrainingAfter,
-                      specialTransferAfter: options.specialTransferAfter)
+                      specialTransferAfter: options.specialTransferAfter,
+                      stallSeasons: options.stallSeasons)
 
 
   let start = getMonoTime()

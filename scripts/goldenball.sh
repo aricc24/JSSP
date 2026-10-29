@@ -31,6 +31,7 @@ for (( i=0; i<PROCESSES; i++ )); do
     --max-training-failures:"$MAX_TRAINING_FAILURES" \
     --custom-training-after:"$CUSTOM_TRAINING_AFTER" \
     --special-transfer-after:"$SPECIAL_TRANSFER_AFTER" \
+    --stall-seasons:"$STALL_SEASONS" \
     > "$LOGDIR/process_${i}.log" 2>&1 &
 
   pids+=($!)
