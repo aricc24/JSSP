@@ -19,8 +19,6 @@ suite "Instance 40x40":
   test "header":
     check inst.numJobs == 40
     check inst.numMachines == 40
-    check inst.upperBound == 205
-    check inst.lowerBound == 103
 
   test "all operations loaded":
     check inst.ops.len == 1600

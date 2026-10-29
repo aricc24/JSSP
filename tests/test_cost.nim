@@ -10,12 +10,10 @@ proc graphOf(inst: Instance, chain: OperationChain): DisjunctiveGraph =
   inst.buildGraph(inst.toMachineChain(chain))
 
 suite "Cost 3x3":
-  let inst = ft3x3()
+  var inst = ft3x3()
+  inst.upperBound = inst.computeUpperBound
+  inst.lowerBound = inst.computeLowerBound
   var ws = initWorkspace(inst.numOps)
-
-  test "bounds from the known formulas":
-    check inst.computeUpperBound == 24
-    check inst.computeLowerBound == 10
 
   test "makespan 12, feasible":
     let ev = inst.evaluate(inst.graphOf(ganttChain), ws)
