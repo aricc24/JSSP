@@ -17,6 +17,8 @@ proc train*(player: var Player, coach: Coach, problem: Problem,
       player.cost = c 
       failures = 0
       result = true
+    elif c == player.cost:
+      inc failures
     else: 
       player.chain.undo(mv)
       inc failures
