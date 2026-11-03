@@ -100,6 +100,9 @@ proc evaluateChain(chain: seq[int]): Evaluation =
 proc jsspCost(chain: seq[int]): float = 
   cost(inst, evaluateChain(chain))
 
+proc randomChain(rng: var Rand): seq[int] =
+  randomOperationChain(inst, rng)
+
 proc feasibleChain(rng: var Rand): seq[int] =
   randomFeasibleChain(inst, rng)
 
@@ -124,6 +127,15 @@ proc n7Coach(chain: seq[int], rng: var Rand, mv: var Move): bool =
   let s = moves[rng.rand(moves.high)]
   mv = Move(kind: mkInsert, a: s.src, b: s.dst)
   true
+  
+proc machineSwapCoach(chain: seq[int], rng: var Rand, mv: var Move): bool =
+  let a = rng.rand(chain.high)
+  let machine = inst.ops[chain[a]].machine
+  var b = rng.rand(chain.high)
+  while b == a or inst.ops[chain[b]].machine != machine:
+    b = rng.rand(chain.high)
+  mv = Move(kind: mkSwap, a: a, b: b)
+  true
 
 proc main() = 
   let options = parseArguments()
@@ -137,8 +149,10 @@ proc main() =
 
   let problem = 
           Problem(cost: jsspCost, 
-                  newChain: feasibleChain,  
-                  coaches: @[Coach(n5Coach), Coach(n7Coach)]
+                  newChain: randomChain,  
+                  coaches: @[genericCoach(mkSwap), genericCoach(mkInsert), 
+                              genericCoach(mkReverse), Coach(machineSwapCoach), 
+                              Coach(n5Coach), Coach(n7Coach)]
                   )
   
   let params = Params(numTeams: options.numTeams,
