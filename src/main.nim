@@ -138,9 +138,7 @@ proc main() =
   let problem = 
           Problem(cost: jsspCost, 
                   newChain: feasibleChain,  
-                  coaches: @[genericCoach(mkSwap), genericCoach(mkInsert), 
-                              genericCoach(mkReverse), genericCoach(mkAdjacentSwap), 
-                              n5Coach, n7Coach]
+                  coaches: @[Coach(n5Coach), Coach(n7Coach)]
                   )
   
   let params = Params(numTeams: options.numTeams,
