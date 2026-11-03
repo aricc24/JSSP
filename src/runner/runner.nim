@@ -1,6 +1,6 @@
 import std/random
 import ../jssp/cost
-import ../goldenball/[problem, goldenball]
+import ../goldenball/[types, problem, goldenball]
 
 type
   MultiRunResult* = object
@@ -19,7 +19,15 @@ proc runMultiple*(problem: Problem, params: Params, runs: int, baseSeed: int, pr
   for runIndex in 0 ..< runs:
     let seed = baseSeed + runIndex
     var rng = initRand(seed)
-    let res = solve(problem, params, rng)
+
+    let onImprove = proc(season: int, best: Player) =
+      let ev = evalChain(best.chain)
+      echo "[Process ", processId, "] Seed: ", seed,
+           " | Season: ", season,
+           " | Makespan: ", ev.makespan,
+           " | Cost: ", best.cost
+
+    let res = solve(problem, params, rng, onImprove)
     let ev = evalChain(res.best.chain)
 
     if res.best.cost < result.bestCost:

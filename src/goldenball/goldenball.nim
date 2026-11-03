@@ -30,6 +30,8 @@ type
     best*: Player
     seasons*: int
 
+  ImproveProc* = proc(season: int, best: Player)
+
   Snapshot = object
     sumQuality: float
     sumCaptains: float
@@ -46,6 +48,13 @@ func improves(now, before: Snapshot): bool =
   now.sumQuality < before.sumQuality or
     now.sumCaptains < before.sumCaptains or
       now.best < before.best
+
+func bestCaptain(teams: seq[Team]): Player =
+  var b = 0
+  for t in 1 ..< teams.len: 
+    if teams[t].captain.cost < teams[b].captain.cost: 
+      b = t
+  teams[b].captain
 
 proc playSeason(teams: var seq[Team], problem: Problem, params: Params, 
                 schedule: seq[seq[(int, int)]], buf: var HelpBuffer,
@@ -65,17 +74,25 @@ proc playSeason(teams: var seq[Team], problem: Problem, params: Params,
     seasonTransfers(teams, order)
     dismissCoaches(teams, order, problem.coaches.len, rng)
 
-proc solve*(problem: Problem, params: Params, rng: var Rand): RunResult =
+proc solve*(problem: Problem, params: Params, rng: var Rand,
+            onImprove: ImproveProc = nil): RunResult =
   var teams = initTeams(problem, rng, params.numTeams, params.playersPerTeam)
   let schedule = roundRobin(params.numTeams)
   var buf = initHelpBuffer(teams[0].players[0].chain.len)
   var before = snapshot(teams)
   var stall = 0
+  var bestCost = before.best
 
   while result.seasons < params.maxSeasons: 
     playSeason(teams, problem, params, schedule, buf, rng)
     inc result.seasons
     let now = snapshot(teams)
+
+    if now.best < bestCost:
+      bestCost = now.best
+      if onImprove != nil:
+        onImprove(result.seasons, teams.bestCaptain)
+
     if now.improves(before):
       stall = 0 
       before = now
@@ -84,8 +101,4 @@ proc solve*(problem: Problem, params: Params, rng: var Rand): RunResult =
       if stall >= params.stallSeasons:
         break
   
-  var b = 0
-  for t in 1 ..< teams.len: 
-    if teams[t].captain.cost < teams[b].captain.cost: 
-      b = t
-  result.best = teams[b].captain
+  result.best = teams.bestCaptain
