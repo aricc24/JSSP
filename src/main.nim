@@ -5,6 +5,7 @@ import jssp/[cost, critical_path, neighborhoods]
 import goldenball/[moves, problem, goldenball]
 import runner/runner
 import jssp/io/schedule_file
+import goldenball/standings_file
 
 var inst: Instance
 var g: DisjunctiveGraph
@@ -175,6 +176,7 @@ proc main() =
   let ev = evaluateChain(res.bestChain)
   if ev.nodesInCycle == 0:
     writeSchedule("schedule_" & $options.processId & ".csv", schedule(inst, ws))
+  writeStandings("standings_" & $options.processId & ".csv", res.bestStandings)
 
   echo ""
   echo "========================================"

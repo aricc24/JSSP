@@ -10,6 +10,7 @@ type
     bestNodesInCycle*: int
     bestSeed*: int
     bestSeasons*: int
+    bestStandings*: seq[Standing]
 
 proc runMultiple*(problem: Problem, params: Params, runs: int, baseSeed: int, processId: int,
                   evalChain: proc(chain: seq[int]): Evaluation): MultiRunResult =
@@ -37,6 +38,7 @@ proc runMultiple*(problem: Problem, params: Params, runs: int, baseSeed: int, pr
       result.bestNodesInCycle = ev.nodesInCycle
       result.bestSeed = seed
       result.bestSeasons = res.seasons
+      result.bestStandings = res.standings
 
       echo "[Process ", processId, "] ",
            "New best: ", result.bestCost,

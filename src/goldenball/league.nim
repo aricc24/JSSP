@@ -41,11 +41,17 @@ func playMatch*(teams: var seq[Team], p1: int, p2: int) =
     
   if goalsP1 > goalsP2: 
     teams[p1].points += 3
+    inc teams[p1].wins
+    inc teams[p2].losses
   elif goalsP2 > goalsP1: 
     teams[p2].points += 3
+    inc teams[p2].wins
+    inc teams[p1].losses
   else:
     teams[p1].points += 1
     teams[p2].points += 1 
+    inc teams[p1].draws
+    inc teams[p2].draws
       
 func playMatchday*(teams: var seq[Team], matches: seq[(int, int)]) =
   for (p1, p2) in matches: 

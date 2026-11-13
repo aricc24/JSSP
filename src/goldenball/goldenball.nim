@@ -29,6 +29,7 @@ type
   RunResult* = object
     best*: Player
     seasons*: int
+    standings*: seq[Standing]
 
   ImproveProc* = proc(season: int, best: Player)
 
@@ -61,6 +62,9 @@ proc playSeason(teams: var seq[Team], problem: Problem, params: Params,
                 rng: var Rand) =
   for team in teams.mitems: 
     team.points = 0
+    team.wins = 0
+    team.draws = 0
+    team.losses = 0
   
   for half in 0 ..< 2: 
     for matches in schedule: 
@@ -73,6 +77,15 @@ proc playSeason(teams: var seq[Team], problem: Problem, params: Params,
     let order = standings(teams)
     seasonTransfers(teams, order)
     dismissCoaches(teams, order, problem.coaches.len, rng)
+
+func finalStandings(teams: seq[Team]): seq[Standing] =
+  for t in standings(teams):
+    result.add Standing(team: t + 1,
+                        points: teams[t].points,
+                        wins: teams[t].wins,
+                        draws: teams[t].draws,
+                        losses: teams[t].losses,
+                        captainCost: teams[t].captain.cost)
 
 proc solve*(problem: Problem, params: Params, rng: var Rand,
             onImprove: ImproveProc = nil): RunResult =
@@ -102,3 +115,4 @@ proc solve*(problem: Problem, params: Params, rng: var Rand,
         break
   
   result.best = teams.bestCaptain
+  result.standings = finalStandings(teams)

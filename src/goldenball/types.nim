@@ -8,6 +8,17 @@ type
     players*: seq[Player]
     coach*: int 
     points*: int
+    wins*: int
+    draws*: int
+    losses*: int
+
+  Standing* = object
+    team*: int
+    points*: int
+    wins*: int
+    draws*: int
+    losses*: int
+    captainCost*: float
 
 func sortPlayers*(team: var Team) =
   for i in 1 ..< team.players.len: 
