@@ -25,7 +25,7 @@ nimble --version
 ### 2. Clone the repository
 
 ```bash
-git clone <<REPOSITORY URL>>
+git clone https://github.com/aricc24/JSSP
 cd jssp
 ```
 
@@ -155,7 +155,7 @@ chmod +x scripts/goldenball.sh
 Then run it with the configuration file:
 
 ```bash
-./scripts/goldenball.sh settings/goldenball.conf
+./scripts/goldenball.sh config/experiment.config
 ```
 
 The script reads the parameters from the given file and distributes `TOTAL_RUNS` among `PROCESSES` processes. Each process receives its own seed, derived from `BASE_SEED`, so the runs do not repeat. When all processes finish, the script prints the last lines of each log.
