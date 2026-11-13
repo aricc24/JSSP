@@ -4,6 +4,7 @@ import jssp/models/[solution, graph]
 import jssp/[cost, critical_path, neighborhoods]
 import goldenball/[moves, problem, goldenball]
 import runner/runner
+import jssp/io/schedule_file
 
 var inst: Instance
 var g: DisjunctiveGraph
@@ -171,6 +172,9 @@ proc main() =
                         processId = options.processId, 
                         evalChain = evaluateChain)
   let elapsed = (getMonoTime() - start).inMilliseconds
+  let ev = evaluateChain(res.bestChain)
+  if ev.nodesInCycle == 0:
+    writeSchedule("schedule_" & $options.processId & ".csv", schedule(inst, ws))
 
   echo ""
   echo "========================================"
