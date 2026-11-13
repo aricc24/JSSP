@@ -25,7 +25,7 @@ nimble --version
 ### 2. Clone the repository
 
 ```bash
-git clone <<REPOSITORY URL>>
+git clone https://github.com/aricc24/JSSP
 cd jssp
 ```
 
@@ -93,23 +93,46 @@ Machines are indexed from 0. The bounds in the file are recomputed by the progra
 Experiments are configured in:
 
 ```text
-config/experiment.conf
+settings/goldenball.conf
 ```
 
-<<EXAMPLE OF THE .conf AND MEANING OF EACH KEY, PENDING>>
+Example:
 
-Golden Ball parameters:
+```conf
+INSTANCE=instances/JSSP_40_40.txt
+BASE_SEED=135791113172064
+TOTAL_RUNS=1
+PROCESSES=1
 
-| Parameter | Meaning |
+NUM_TEAMS=4
+PLAYERS_PER_TEAM=12
+MAX_SEASONS=10000
+MAX_TRAINING_FAILURES=100
+CUSTOM_TRAINING_AFTER=3
+SPECIAL_TRANSFER_AFTER=5
+STALL_SEASONS=500
+```
+
+Experiment keys:
+
+| Key | Meaning |
 |---|---|
-| `numTeams` | Number of teams |
-| `playersPerTeam` | Players per team |
-| `maxSeasons` | Maximum number of seasons |
-| `maxTrainingFailures` | Failed trainings before a player stops training |
-| `customTrainingAfter` | Failures after which a custom training (Golden Help) is applied |
-| `specialTransferAfter` | Seasons after which a special transfer happens |
-| `stallSeasons` | Limit on seasons without improvement |
+| `INSTANCE` | Path of the instance file |
+| `BASE_SEED` | Base seed of the random number generator |
+| `TOTAL_RUNS` | Number of independent runs |
+| `PROCESSES` | Number of processes the runs are distributed among |
 
+Golden Ball keys:
+
+| Key | Meaning |
+|---|---|
+| `NUM_TEAMS` | Number of teams |
+| `PLAYERS_PER_TEAM` | Players per team |
+| `MAX_SEASONS` | Maximum number of seasons |
+| `MAX_TRAINING_FAILURES` | Failed trainings before a player stops training |
+| `CUSTOM_TRAINING_AFTER` | Failures after which a custom training (Golden Help) is applied |
+| `SPECIAL_TRANSFER_AFTER` | Special transfer threshold (see the Golden Ball paper) |
+| `STALL_SEASONS` | Stop if no season improves the search for this many seasons |
 
 ## Compilation
 
@@ -121,7 +144,40 @@ The executable is generated as `src/main`.
 
 ## Running
 
-<<RUN WITH scripts/goldenball.sh AND PROCESSES, PENDING>>
+The recommended way to run an experiment is through the provided script.
+
+First, make sure it has execution permissions:
+
+```bash
+chmod +x scripts/goldenball.sh
+```
+
+Then run it with the configuration file:
+
+```bash
+./scripts/goldenball.sh config/experiment.config
+```
+
+The script reads the parameters from the given file and distributes `TOTAL_RUNS` among `PROCESSES` processes. Each process receives its own seed, derived from `BASE_SEED`, so the runs do not repeat. When all processes finish, the script prints the last lines of each log.
+
+### Running directly
+
+The executable can also be invoked directly:
+
+```bash
+./src/main \
+    --instance:instances/JSSP_40_40.txt \
+    --runs:1 \
+    --seed:135791113172064 \
+    --process:0 \
+    --num-teams:4 \
+    --players-per-team:12 \
+    --max-seasons:10000 \
+    --max-training-failures:100 \
+    --custom-training-after:3 \
+    --special-transfer-after:5 \
+    --stall-seasons:500
+```
 
 Each process writes its log to `logs/process_*.log`.
 
